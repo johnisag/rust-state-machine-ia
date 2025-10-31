@@ -1,12 +1,12 @@
 use std::collections::BTreeMap;
 
-/// This is the Balances Module.
-/// It is a simple module which keeps track of how much balance each account has in this state
-/// machine.
+type AccountId = String;
+type Balance = u128;
+
 #[derive(Debug)]
 pub struct Pallet {
-	// A simple storage mapping from accounts (`String`) to their balances (`u128`).
-	balances: BTreeMap<String, u128>,
+	// A simple storage mapping from accounts (`AccountId`) to their balances (`Balance`).
+	balances: BTreeMap<AccountId, Balance>,
 }
 
 impl Pallet {
@@ -16,14 +16,14 @@ impl Pallet {
 	}
 
 	/// Set the balance of an account `who` to some `amount`.
-	pub fn set_balance(&mut self, who: &String, amount: u128) {
+	pub fn set_balance(&mut self, who: &AccountId, amount: Balance) {
 		/* Insert `amount` into the BTreeMap under `who`. */
 		self.balances.insert(who.clone(), amount);
 	}
 
 	/// Get the balance of an account `who`.
 	/// If the account has no stored balance, we return zero.
-	pub fn balance(&self, who: &String) -> u128 {
+	pub fn balance(&self, who: &AccountId) -> Balance {
 		/* Return the balance of `who`, returning zero if `None`. */
 		*self.balances.get(who).unwrap_or(&0)
 	}
@@ -33,9 +33,9 @@ impl Pallet {
 	/// and that no mathematical overflows occur.
 	pub fn transfer(
 		&mut self,
-		caller: String,
-		to: String,
-		amount: u128,
+		caller: AccountId,
+		to: AccountId,
+		amount: Balance,
 	) -> Result<(), &'static str> {
 		let caller_balance = self.balance(&caller);
 		let to_balance = self.balance(&to);
@@ -67,13 +67,13 @@ mod tests {
 		let mut balances = super::Pallet::new();
 
 		assert_eq!(
-			balances.transfer("alice".to_string(), "bob".to_string(), 50),
+			balances.transfer("alice".to_string(), "bob".to_string(), 51),
 			Err("Not enough funds.")
 		);
 		balances.set_balance(&"alice".to_string(), 100);
-		assert_eq!(balances.transfer("alice".to_string(), "bob".to_string(), 50), Ok(()));
-		assert_eq!(balances.balance(&"alice".to_string()), 50);
-		assert_eq!(balances.balance(&"bob".to_string()), 50);
+		assert_eq!(balances.transfer("alice".to_string(), "bob".to_string(), 51), Ok(()));
+		assert_eq!(balances.balance(&"alice".to_string()), 49);
+		assert_eq!(balances.balance(&"bob".to_string()), 51);
 		assert_eq!(
 			balances.transfer("alice".to_string(), "bob".to_string(), 51),
 			Err("Not enough funds.")
