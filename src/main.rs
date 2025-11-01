@@ -19,15 +19,14 @@ pub struct Runtime {
 	balances: balances::Pallet<Self>,
 }
 
-impl balances::Config for Runtime {
-	type AccountId = types::AccountId;
-	type Balance = types::Balance;
-}
-
 impl system::Config for Runtime {
 	type AccountId = types::AccountId;
 	type BlockNumber = types::BlockNumber;
 	type Nonce = types::Nonce;
+}
+
+impl balances::Config for Runtime {
+	type Balance = types::Balance;
 }
 
 impl Runtime {

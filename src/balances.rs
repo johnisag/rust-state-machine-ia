@@ -1,8 +1,11 @@
 use num::traits::{CheckedAdd, CheckedSub, Zero};
 use std::collections::BTreeMap;
 
-pub trait Config {
-	type AccountId: Ord + Clone;
+/// The configuration trait for the Balances Module.
+/// Contains the basic types needed for handling balances.
+pub trait Config: crate::system::Config {
+	/// A type which can represent the balance of an account.
+	/// Usually this is a large unsigned integer.
 	type Balance: Zero + CheckedSub + CheckedAdd + Copy;
 }
 
@@ -16,7 +19,7 @@ pub struct Pallet<T: Config> {
 }
 
 impl<T: Config> Pallet<T> {
-	/// Create a new instance of the balances module.
+	// Create a new instance of the balances module.
 	pub fn new() -> Self {
 		Self { balances: BTreeMap::new() }
 	}
@@ -56,12 +59,15 @@ impl<T: Config> Pallet<T> {
 
 #[cfg(test)]
 mod tests {
-	use crate::balances::Config;
-
 	struct TestConfig;
 
-	impl Config for TestConfig {
+	impl crate::system::Config for TestConfig {
 		type AccountId = String;
+		type BlockNumber = u32;
+		type Nonce = u32;
+	}
+
+	impl super::Config for TestConfig {
 		type Balance = u128;
 	}
 
