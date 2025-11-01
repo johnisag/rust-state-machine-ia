@@ -16,8 +16,12 @@ mod types {
 #[derive(Debug)]
 pub struct Runtime {
 	system: system::Pallet<Self>,
-	/* TODO: Use your type definitions for your new generic `balances::Pallet`. */
-	balances: balances::Pallet<types::AccountId, types::Balance>,
+	balances: balances::Pallet<Self>,
+}
+
+impl balances::Config for Runtime {
+	type AccountId = types::AccountId;
+	type Balance = types::Balance;
 }
 
 impl system::Config for Runtime {
@@ -29,10 +33,7 @@ impl system::Config for Runtime {
 impl Runtime {
 	/// Create a new instance of the runtime.
 	pub fn new() -> Self {
-		Self {
-			system: system::Pallet::<Self>::new(),
-			balances: balances::Pallet::<types::AccountId, types::Balance>::new(),
-		}
+		Self { system: system::Pallet::<Self>::new(), balances: balances::Pallet::<Self>::new() }
 	}
 }
 
