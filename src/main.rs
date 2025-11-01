@@ -15,15 +15,24 @@ mod types {
 // It accumulates all of the different pallets we want to use.
 #[derive(Debug)]
 pub struct Runtime {
-	system: system::Pallet<types::AccountId, types::BlockNumber, types::Nonce>,
+	system: system::Pallet<Self>,
 	/* TODO: Use your type definitions for your new generic `balances::Pallet`. */
 	balances: balances::Pallet<types::AccountId, types::Balance>,
 }
 
+impl system::Config for Runtime {
+	type AccountId = types::AccountId;
+	type BlockNumber = types::BlockNumber;
+	type Nonce = types::Nonce;
+}
+
 impl Runtime {
-	// Create a new instance of the main Runtime, by creating a new instance of each pallet.
-	fn new() -> Self {
-		Self { system: system::Pallet::new(), balances: balances::Pallet::new() }
+	/// Create a new instance of the runtime.
+	pub fn new() -> Self {
+		Self {
+			system: system::Pallet::<Self>::new(),
+			balances: balances::Pallet::<types::AccountId, types::Balance>::new(),
+		}
 	}
 }
 
